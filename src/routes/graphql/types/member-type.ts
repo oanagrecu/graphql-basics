@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import { Environment } from './environment.js';
 import { ProfileType } from './profile-type.js';
-import { Member } from './member.js';
+import { MemberIt } from './member.js';
 
 export const enumMemberId = new GraphQLEnumType({
   name: 'MemberTypeId',
@@ -25,12 +25,10 @@ export const MemberType: GraphQLObjectType = new GraphQLObjectType({
     postsLimitPerMonth: { type: GraphQLInt },
     profiles: {
       type: new GraphQLList(ProfileType),
-      resolve: async ({ id }: Member, _context: Environment) => {
-        try {
-          return await _context.db.profile.findMany({ where: { memberTypeId: id } });
-        } catch {
-          return null;
-        }
+      resolve: async (parent: MemberIt, _args, context: Environment) => {
+        return await context.db.profile.findMany({
+          where: { memberTypeId: parent.id },
+        });
       },
     },
   }),

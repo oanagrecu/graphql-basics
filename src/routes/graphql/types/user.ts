@@ -2,7 +2,6 @@ export interface User {
   id?: string;
   name: string;
   balance: number;
-  // profile: IProfile,
   userSubscribedTo?: {
     subscriberId: string;
     authorId: string;

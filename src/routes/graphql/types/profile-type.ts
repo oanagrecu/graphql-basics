@@ -10,7 +10,7 @@ import { UUIDType } from './uuid.js';
 import { UserType } from './user-type.js';
 import { MemberType, enumMemberId } from './member-type.js';
 import { Profile } from './profile.js';
-
+import { MemberIt } from './member.js';
 export const ProfileType: GraphQLObjectType = new GraphQLObjectType({
   name: 'ProfileType',
   description: 'User profile',
@@ -28,9 +28,9 @@ export const ProfileType: GraphQLObjectType = new GraphQLObjectType({
     },
     memberType: {
       type: MemberType,
-      resolve: async (_parent: Profile, _, _context: Environment) => {
-        return await _context.db.memberType.findFirst({
-          where: { id: _parent.memberTypeId },
+      resolve: async (profile, args, context) => {
+        return await context.db.memberType.findFirst({
+          where: { id: profile.memberTypeId },
         });
       },
     },

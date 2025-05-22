@@ -1,4 +1,9 @@
-import { GraphQLBoolean, GraphQLNonNull, GraphQLObjectType } from 'graphql';
+import {
+  GraphQLBoolean,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLString,
+} from 'graphql';
 import { Environment } from '../types/environment.js';
 import { ChangePostType, PostType } from '../types/post-type.js';
 import { UserType, changeUserType } from '../types/user-type.js';
@@ -38,15 +43,11 @@ export const RootMutation = new GraphQLObjectType({
     },
 
     deleteUser: {
-      type: GraphQLBoolean,
+      type: new GraphQLNonNull(GraphQLString),
       args: { id: { type: UUIDType } },
       resolve: async (_parent, _args: User, _context: Environment) => {
-        try {
-          await _context.db.user.delete({ where: { id: _args.id } });
-        } catch (err) {
-          return false;
-        }
-        return true;
+        await _context.db.user.delete({ where: { id: _args.id } });
+        return `User with ID ${_args.id} deleted`;
       },
     },
 
@@ -76,19 +77,11 @@ export const RootMutation = new GraphQLObjectType({
     },
 
     deletePost: {
-      type: GraphQLBoolean,
-      args: {
-        id: { type: new GraphQLNonNull(UUIDType) },
-      },
+      type: new GraphQLNonNull(GraphQLString),
+      args: { id: { type: new GraphQLNonNull(UUIDType) } },
       resolve: async (_parent, _args: POST, _context: Environment) => {
-        try {
-          const db = _context.db;
-          await db.post.delete({ where: { id: _args.id } });
-        } catch (err) {
-          console.error(err);
-          return false;
-        }
-        return true;
+        await _context.db.post.delete({ where: { id: _args.id } });
+        return `Post with ID ${_args.id} deleted`;
       },
     },
 
@@ -115,44 +108,33 @@ export const RootMutation = new GraphQLObjectType({
       },
     },
     deleteProfile: {
-      type: GraphQLBoolean,
-      args: {
-        id: { type: new GraphQLNonNull(UUIDType) },
-      },
+      type: new GraphQLNonNull(GraphQLString),
+      args: { id: { type: new GraphQLNonNull(UUIDType) } },
       resolve: async (_parent, _args: Profile, _context: Environment) => {
-        try {
-          const db = _context.db;
-          await db.profile.delete({ where: { id: _args.id } });
-        } catch (err) {
-          console.error(err);
-          return false;
-        }
-        return true;
+        await _context.db.profile.delete({ where: { id: _args.id } });
+        return `Profile with ID ${_args.id} deleted`;
       },
     },
 
     subscribeTo: {
-      type: UserType,
+      type: new GraphQLNonNull(GraphQLString),
       args: { userId: { type: UUIDType }, authorId: { type: UUIDType } },
       resolve: async (_parent, _args: userSubscribedTo, _context: Environment) => {
         await _context.db.subscribersOnAuthors.create({
           data: { subscriberId: _args.userId, authorId: _args.authorId },
         });
-        return await _context.db.user.findFirst({ where: { id: _args.userId } });
+        return `User ${_args.userId} subscribed to ${_args.authorId}`;
       },
     },
+
     unsubscribeFrom: {
-      type: GraphQLBoolean,
+      type: new GraphQLNonNull(GraphQLString),
       args: { userId: { type: UUIDType }, authorId: { type: UUIDType } },
       resolve: async (_parent, _args: userSubscribedTo, _context: Environment) => {
-        try {
-          await _context.db.subscribersOnAuthors.deleteMany({
-            where: { subscriberId: _args.userId, authorId: _args.authorId },
-          });
-        } catch (err) {
-          return false;
-        }
-        return true;
+        await _context.db.subscribersOnAuthors.deleteMany({
+          where: { subscriberId: _args.userId, authorId: _args.authorId },
+        });
+        return `User ${_args.userId} unsubscribed from ${_args.authorId}`;
       },
     },
   }),

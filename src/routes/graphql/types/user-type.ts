@@ -11,7 +11,7 @@ import { User } from './user.js';
 import { UUIDType } from './uuid.js';
 import { PostType } from './post-type.js';
 import { ProfileType } from './profile-type.js';
-//import { IProfile } from './profile.js';
+// import { Profile } from './profile.js';
 
 export const UserType: GraphQLObjectType = new GraphQLObjectType({
   name: 'UserType',
@@ -24,9 +24,19 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
       type: ProfileType,
       resolve: async (_parent: User, _, _context: Environment) => {
         const db = _context.db;
-        return await db.profile.findFirst({ where: { userId: _parent.id } });
+        return await db.profile.findFirst({
+          where: { userId: _parent.id },
+          select: {
+            id: true,
+            isMale: true,
+            yearOfBirth: true,
+            userId: true,
+            memberTypeId: true,
+          },
+        });
       },
     },
+
     posts: {
       type: new GraphQLList(PostType),
       resolve: async (_parent: User, _, _context: Environment) => {

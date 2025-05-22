@@ -8,7 +8,7 @@ import { ProfileType } from '../types/profile-type.js';
 import { UserType } from '../types/user-type.js';
 import { Profile } from '../types/profile.js';
 import { MemberType, enumMemberId } from '../types/member-type.js';
-import { Member } from '../types/member.js';
+import { MemberIt } from '../types/member.js';
 
 export const RootQuery = new GraphQLObjectType({
   name: 'Query',
@@ -64,12 +64,12 @@ export const RootQuery = new GraphQLObjectType({
         return data;
       },
     },
-    member: {
+    memberType: {
       type: MemberType,
       args: {
         id: { type: new GraphQLNonNull(enumMemberId) },
       },
-      resolve: async (_, _args: Member, _context: Environment) => {
+      resolve: async (_, _args: MemberIt, _context: Environment) => {
         return await _context.db.memberType.findFirst({ where: { id: _args.id } });
       },
     },
