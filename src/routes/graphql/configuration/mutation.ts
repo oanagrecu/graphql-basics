@@ -1,9 +1,4 @@
-import {
-  GraphQLBoolean,
-  GraphQLNonNull,
-  GraphQLObjectType,
-  GraphQLString,
-} from 'graphql';
+import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 import { Environment } from '../types/environment.js';
 import { ChangePostType, PostType } from '../types/post-type.js';
 import { UserType, changeUserType } from '../types/user-type.js';
@@ -19,7 +14,7 @@ import {
 } from '../types/profile-type.js';
 import { ChangeProfile, CreateProfile, Profile } from '../types/profile.js';
 
-export const RootMutation = new GraphQLObjectType({
+export const Mutations = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     createUser: {
@@ -89,8 +84,7 @@ export const RootMutation = new GraphQLObjectType({
       type: ProfileType,
       args: { dto: { type: createProfileType } },
       resolve: async (_, _args: CreateProfile, _context: Environment) => {
-        const db = _context.db;
-        const newProfile = await db.profile.create({ data: _args.dto });
+        const newProfile = await _context.db.profile.create({ data: _args.dto });
         return newProfile;
       },
     },

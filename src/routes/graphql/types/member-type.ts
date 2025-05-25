@@ -12,12 +12,13 @@ import { MemberIt } from './member.js';
 export const enumMemberId = new GraphQLEnumType({
   name: 'MemberTypeId',
   values: {
-    basic: { value: 'basic' },
-    business: { value: 'business' },
+    BASIC: { value: 'BASIC' },
+    BUSINESS: { value: 'BUSINESS' },
   },
 });
+
 export const MemberType: GraphQLObjectType = new GraphQLObjectType({
-  name: 'Member',
+  name: 'MemberType',
   description: 'Member Type',
   fields: () => ({
     id: { type: enumMemberId },
@@ -25,10 +26,12 @@ export const MemberType: GraphQLObjectType = new GraphQLObjectType({
     postsLimitPerMonth: { type: GraphQLInt },
     profiles: {
       type: new GraphQLList(ProfileType),
-      resolve: async (parent: MemberIt, _args, context: Environment) => {
-        return await context.db.profile.findMany({
-          where: { memberTypeId: parent.id },
-        });
+      resolve: async ({ id }: MemberIt, _context: Environment) => {
+        try {
+          return await _context.db.profile.findMany({ where: { memberTypeId: id } });
+        } catch {
+          return null;
+        }
       },
     },
   }),

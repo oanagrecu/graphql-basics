@@ -11,15 +11,16 @@ import { User } from './user.js';
 import { UUIDType } from './uuid.js';
 import { PostType } from './post-type.js';
 import { ProfileType } from './profile-type.js';
-// import { Profile } from './profile.js';
+//  import { Profile } from './profile.js';
 
 export const UserType: GraphQLObjectType = new GraphQLObjectType({
   name: 'UserType',
   description: 'User in DB',
   fields: () => ({
-    id: { type: UUIDType },
-    name: { type: GraphQLString },
-    balance: { type: GraphQLFloat },
+    id: { type: new GraphQLNonNull(UUIDType) },
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    balance: { type: new GraphQLNonNull(GraphQLFloat) },
+
     profile: {
       type: ProfileType,
       resolve: async (_parent: User, _, _context: Environment) => {
@@ -57,11 +58,11 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
     subscribedToUser: {
       type: new GraphQLList(UserType),
       resolve: async (_parent: User, _, _context: Environment) => {
-        const thisUserSuscribers = await _context.db.subscribersOnAuthors.findMany({
+        const thisUserSubscribers = await _context.db.subscribersOnAuthors.findMany({
           where: { authorId: _parent.id },
           include: { subscriber: true },
         });
-        return thisUserSuscribers.map((item) => item.subscriber);
+        return thisUserSubscribers.map((item) => item.subscriber);
       },
     },
   }),

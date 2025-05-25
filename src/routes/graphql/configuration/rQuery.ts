@@ -10,7 +10,7 @@ import { Profile } from '../types/profile.js';
 import { MemberType, enumMemberId } from '../types/member-type.js';
 import { MemberIt } from '../types/member.js';
 
-export const RootQuery = new GraphQLObjectType({
+export const RootQueryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
     users: {
@@ -57,6 +57,7 @@ export const RootQuery = new GraphQLObjectType({
         return result;
       },
     },
+
     profiles: {
       type: new GraphQLList(ProfileType),
       resolve: async (_, __, _context: Environment) => {
@@ -66,16 +67,15 @@ export const RootQuery = new GraphQLObjectType({
     },
     memberType: {
       type: MemberType,
-      args: {
-        id: { type: new GraphQLNonNull(enumMemberId) },
-      },
+      args: { id: { type: new GraphQLNonNull(enumMemberId) } },
       resolve: async (_, _args: MemberIt, _context: Environment) => {
-        return await _context.db.memberType.findFirst({ where: { id: _args.id } });
+        const data = await _context.db.memberType.findFirst({ where: { id: _args.id } });
+        return data;
       },
     },
     memberTypes: {
       type: new GraphQLList(MemberType),
-      resolve: async (_, __, _context: Environment) => {
+      resolve: async (_, __, _context) => {
         return await _context.db.memberType.findMany();
       },
     },

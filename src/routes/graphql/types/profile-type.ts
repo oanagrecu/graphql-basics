@@ -10,7 +10,7 @@ import { UUIDType } from './uuid.js';
 import { UserType } from './user-type.js';
 import { MemberType, enumMemberId } from './member-type.js';
 import { Profile } from './profile.js';
-import { MemberIt } from './member.js';
+// import { MemberIt } from './member.js';
 export const ProfileType: GraphQLObjectType = new GraphQLObjectType({
   name: 'ProfileType',
   description: 'User profile',
