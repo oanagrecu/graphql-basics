@@ -63,11 +63,11 @@ export const Mutations = new GraphQLObjectType({
       args: { id: { type: UUIDType }, dto: { type: ChangePostType } },
       resolve: async (_, _args: ChangePost, _context: Environment) => {
         const db = _context.db;
-        const newPost = await db.post.update({
+        const updatedPost = await db.post.update({
           where: { id: _args.id },
           data: _args.dto,
         });
-        return newPost;
+        return updatedPost;
       },
     },
 
@@ -93,14 +93,14 @@ export const Mutations = new GraphQLObjectType({
       type: ProfileType,
       args: { id: { type: UUIDType }, dto: { type: changeProfileType } },
       resolve: async (_, _args: ChangeProfile, _context: Environment) => {
-        const db = _context.db;
-        const newProfile = await db.profile.update({
+        const updatedProfile = await _context.db.profile.update({
           where: { id: _args.id },
           data: _args.dto,
         });
-        return newProfile;
+        return updatedProfile;
       },
     },
+
     deleteProfile: {
       type: new GraphQLNonNull(GraphQLString),
       args: { id: { type: new GraphQLNonNull(UUIDType) } },

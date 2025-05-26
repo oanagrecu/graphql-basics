@@ -7,7 +7,7 @@ import { PostType } from '../types/post-type.js';
 import { ProfileType } from '../types/profile-type.js';
 import { UserType } from '../types/user-type.js';
 import { Profile } from '../types/profile.js';
-import { MemberType, enumMemberId } from '../types/member-type.js';
+import { MemberType, MemberTypeId } from '../types/member-type.js';
 import { MemberIt } from '../types/member.js';
 
 export const RootQueryType = new GraphQLObjectType({
@@ -16,7 +16,12 @@ export const RootQueryType = new GraphQLObjectType({
     users: {
       type: new GraphQLList(UserType),
       resolve: async (_, __, _context: Environment) => {
-        return await _context.db.user.findMany();
+        return await _context.db.user.findMany({
+          include: {
+            posts: true,
+            profile: true,
+          },
+        });
       },
     },
     user: {
@@ -67,7 +72,7 @@ export const RootQueryType = new GraphQLObjectType({
     },
     memberType: {
       type: MemberType,
-      args: { id: { type: new GraphQLNonNull(enumMemberId) } },
+      args: { id: { type: new GraphQLNonNull(MemberTypeId) } },
       resolve: async (_, _args: MemberIt, _context: Environment) => {
         const data = await _context.db.memberType.findFirst({ where: { id: _args.id } });
         return data;

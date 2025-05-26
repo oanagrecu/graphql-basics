@@ -11,7 +11,6 @@ import { User } from './user.js';
 import { UUIDType } from './uuid.js';
 import { PostType } from './post-type.js';
 import { ProfileType } from './profile-type.js';
-//  import { Profile } from './profile.js';
 
 export const UserType: GraphQLObjectType = new GraphQLObjectType({
   name: 'UserType',

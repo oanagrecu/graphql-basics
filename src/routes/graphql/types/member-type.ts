@@ -9,7 +9,7 @@ import { Environment } from './environment.js';
 import { ProfileType } from './profile-type.js';
 import { MemberIt } from './member.js';
 
-export const enumMemberId = new GraphQLEnumType({
+export const MemberTypeId = new GraphQLEnumType({
   name: 'MemberTypeId',
   values: {
     BASIC: { value: 'BASIC' },
@@ -21,7 +21,7 @@ export const MemberType: GraphQLObjectType = new GraphQLObjectType({
   name: 'MemberType',
   description: 'Member Type',
   fields: () => ({
-    id: { type: enumMemberId },
+    id: { type: MemberTypeId },
     discount: { type: GraphQLFloat },
     postsLimitPerMonth: { type: GraphQLInt },
     profiles: {
@@ -30,7 +30,7 @@ export const MemberType: GraphQLObjectType = new GraphQLObjectType({
         try {
           return await _context.db.profile.findMany({ where: { memberTypeId: id } });
         } catch {
-          return null;
+          return [];
         }
       },
     },
